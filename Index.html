@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Mon Garage"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<title>Mon Garage 🔧</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:#0a0a0f;color:#e8e8f0;font-family:'Rajdhani',sans-serif;overscroll-behavior:none}
+  body{max-width:480px;margin:0 auto;position:relative;overflow-x:hidden}
+
+/* ─── HEADER ─────────────────────────────── */
+#header{
+background:linear-gradient(135deg,#111118,#1a1a2e);
+padding:14px 18px 10px;
+border-bottom:1px solid #2a2a3e;
+display:flex;align-items:center;justify-content:space-between;
+position:sticky;top:0;z-index:100;
+padding-top:max(14px,env(safe-area-inset-top));
+}
+#header-back{background:none;border:none;color:#f97316;font-size:24px;cursor:pointer;padding:4px 8px 4px 0;display:none}
+#header-title{font-size:19px;font-weight:700;letter-spacing:2px;color:#f97316;text-transform:uppercase;text-align:center}
+#header-sub{font-size:11px;color:#6b7280;letter-spacing:1px;text-align:center;margin-top:1px}
+#header-badge{width:10px;height:10px;border-radius:50%;background:#ef4444;animation:pulse 1.5s infinite;display:none}
+
+/* ─── BOTTOM NAV ─────────────────────────── */
+#nav{
+position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+width:100%;max-width:480px;
+background:#111118;border-top:1px solid #2a2a3e;
+display:flex;z-index:100;
+padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-btn{flex:1;padding:10px 0 12px;background:none;border:none;color:#4b5563;font-size:10px;font-family:‘Rajdhani’,sans-serif;letter-spacing:1px;font-weight:600;text-transform:uppercase;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav-btn.active{color:#f97316}
+.nav-btn span{font-size:20px}
+
+/* ─── CONTENT ────────────────────────────── */
+#content{padding:16px 16px 90px;min-height:calc(100vh - 60px)}
+
+/* ─── CARDS / ELEMENTS ───────────────────── */
+.card{background:linear-gradient(135deg,#13131f,#1a1a2e);border:1px solid #2a2a3e;border-radius:16px;padding:16px;margin-bottom:12px;cursor:pointer}
+.card:active{opacity:.85}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.stat-box{background:#13131f;border-radius:12px;padding:12px 8px;text-align:center}
+.stat-num{font-size:26px;font-weight:800;line-height:1}
+.stat-lbl{font-size:10px;color:#6b7280;letter-spacing:1px;margin-top:4px;text-transform:uppercase}
+
+/* ─── BUTTONS ────────────────────────────── */
+.btn{background:linear-gradient(135deg,#f97316,#f97316cc);color:#fff;border:none;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;letter-spacing:1px;font-family:‘Rajdhani’,sans-serif;cursor:pointer;text-transform:uppercase}
+.btn:active{opacity:.85}
+.btn-sm{padding:7px 13px;font-size:12px;border-radius:8px}
+.btn-outline{background:transparent;color:#9ca3af;border:1px solid #374151;border-radius:10px;padding:10px 16px;font-size:13px;font-family:‘Rajdhani’,sans-serif;cursor:pointer}
+.btn-danger{color:#ef4444;border-color:#ef444444}
+.btn-full{width:100%;padding:13px}
+
+/* ─── FORM ───────────────────────────────── */
+.label{font-size:11px;color:#6b7280;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;display:block}
+.input,.select,.textarea{background:#0d0d1a;border:1px solid #2a2a3e;border-radius:10px;padding:12px 14px;color:#e8e8f0;font-size:14px;font-family:‘Rajdhani’,sans-serif;width:100%;outline:none}
+.input:focus,.select:focus,.textarea:focus{border-color:#f9731644}
+.textarea{height:70px;resize:none}
+.select option{background:#0d0d1a}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.form-group{margin-bottom:14px}
+.form-footer{display:flex;gap:10px;margin-top:8px}
+
+/* ─── TAGS ───────────────────────────────── */
+.tag{border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;letter-spacing:.5px;display:inline-block}
+
+/* ─── TABS ───────────────────────────────── */
+.tab-bar{display:flex;background:#13131f;border-radius:12px;padding:4px;margin-bottom:14px;gap:4px}
+.tab-btn{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:#6b7280;font-family:‘Rajdhani’,sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+.tab-btn.active{background:#f97316;color:#fff}
+
+/* ─── ICON PICKER ────────────────────────── */
+.icon-picker{display:flex;gap:8px;flex-wrap:wrap}
+.icon-btn{width:44px;height:44px;border-radius:10px;border:2px solid #2a2a3e;background:#13131f;font-size:22px;cursor:pointer}
+.icon-btn.active{border-color:#f97316;background:#f9731622}
+
+/* ─── COLOR PICKER ───────────────────────── */
+.color-picker{display:flex;gap:8px}
+.color-btn{width:36px;height:36px;border-radius:50%;border:3px solid transparent;cursor:pointer}
+.color-btn.active{border-color:#fff}
+
+/* ─── MAINTENANCE ITEM ───────────────────── */
+.maint-item{background:#13131f;border:1px solid #2a2a3e;border-radius:13px;padding:13px 14px;margin-bottom:9px}
+.maint-header{display:flex;justify-content:space-between;align-items:flex-start}
+.maint-title{font-size:15px;font-weight:700;color:#f1f1f5}
+.maint-meta{font-size:12px;color:#6b7280;margin-top:4px}
+.maint-notes{font-size:12px;color:#4b5563;margin-top:5px;font-style:italic}
+.maint-actions{display:flex;gap:6px;margin-left:10px}
+.maint-act-btn{background:#1a1a2e;border:1px solid #2a2a3e;border-radius:8px;padding:5px 8px;color:#9ca3af;cursor:pointer;font-size:12px}
+
+/* ─── ALERT ITEM ─────────────────────────── */
+.alert-item{background:#13131f;border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer}
+.alert-item:active{opacity:.85}
+
+/* ─── EMPTY STATE ────────────────────────── */
+.empty{text-align:center;padding:60px 20px;color:#374151}
+.empty-icon{font-size:60px;margin-bottom:16px}
+.empty-title{font-size:16px;letter-spacing:1px}
+.empty-sub{font-size:12px;margin-top:8px;color:#4b5563}
+
+/* ─── VEHICLE HEADER ─────────────────────── */
+.vehicle-header{background:linear-gradient(135deg,#13131f,#1a1a2e);border:1px solid #2a2a3e;border-radius:16px;padding:16px;margin-bottom:16px}
+.vehicle-icon-wrap{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0}
+.vehicle-name{font-size:20px;font-weight:800;letter-spacing:1px}
+.vehicle-sub{font-size:13px;color:#9ca3af}
+.plate{font-size:12px;color:#6b7280;letter-spacing:2px;background:#1a2a4a;border:1px solid #2a4a6a;border-radius:4px;padding:1px 6px;display:inline-block;margin-top:2px}
+
+/* ─── SECTION LABEL ──────────────────────── */
+.section-label{font-size:13px;color:#6b7280;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
+
+/* ─── ROW UTIL ───────────────────────────── */
+.row{display:flex;align-items:center;gap:12px}
+.row-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.divider{border-top:1px solid #2a2a3e;padding-top:16px;margin-bottom:14px}
+
+/* ─── TOAST ──────────────────────────────── */
+#toast{
+position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
+border-radius:10px;padding:11px 22px;font-size:14px;font-weight:700;letter-spacing:.5px;
+z-index:999;white-space:nowrap;box-shadow:0 4px 24px #0008;
+opacity:0;transition:all .3s;pointer-events:none
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ─── SECTION DIVIDER ─────────────────────── */
+.alert-section-title{font-size:12px;color:#f97316;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;border-left:3px solid #f97316;padding-left:8px}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div id="header">
+  <button id="header-back" onclick="goBack()">←</button>
+  <div>
+    <div id="header-title">🔧 Mon Garage</div>
+    <div id="header-sub">Chargement…</div>
+  </div>
+  <div id="header-badge"></div>
+</div>
+
+<!-- CONTENT -->
+
+<div id="content"></div>
+
+<!-- BOTTOM NAV -->
+
+<div id="nav">
+  <button class="nav-btn active" id="nav-garage" onclick="setView('dashboard')">
+    <span>🏠</span>Garage
+  </button>
+  <button class="nav-btn" id="nav-alerts" onclick="setView('alerts')">
+    <span>🔔</span>Alertes
+  </button>
+</div>
+
+<!-- TOAST -->
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+const STORAGE_KEY = 'mon-garage-v1';
+const MAINTENANCE_TYPES = [
+  'Vidange huile moteur','Filtre à huile','Filtre à air','Filtre habitacle',
+  'Filtre à carburant','Courroie de distribution','Bougies d\'allumage',
+  'Plaquettes de frein','Disques de frein','Pneus','Liquide de frein',
+  'Liquide de refroidissement','Liquide de direction assistée','Batterie',
+  'Contrôle technique','Assurance','Vignette / Taxe','Amortisseurs',
+  'Courroie accessoire','Autre'
+];
+const CAR_ICONS = ['🚗','🚙','🚕','🚐','🚌','🏎️','🚓','🚑','🚒','🛻'];
+const COLORS = ['#f97316','#3b82f6','#22c55e','#a855f7','#ef4444','#eab308','#06b6d4','#ec4899'];
+
+let vehicles = [];
+let view = 'dashboard';
+let selectedVehicleId = null;
+let currentTab = 'history';
+let editVehicleId = null;
+let editMaintId = null;
+
+// ═══════════════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════════════
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) vehicles = JSON.parse(raw);
+  }catch(e){}
+}
+function saveData(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(vehicles)); }catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════
+function uid(){ return Date.now() + Math.random().toString(36).slice(2); }
+
+function getDaysUntil(dateStr){
+  if(!dateStr) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(dateStr); target.setHours(0,0,0,0);
+  return Math.ceil((target - today)/(1000*60*60*24));
+}
+
+function formatDate(dateStr){
+  if(!dateStr) return '—';
+  return new Date(dateStr).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+
+function urgencyColor(days, kmOverdue){
+  if(kmOverdue || days !== null && days <= 0) return '#ef4444';
+  if(days !== null && days <= 14) return '#f97316';
+  if(days !== null && days <= 30) return '#eab308';
+  return '#4ade80';
+}
+
+function tagHtml(color, text){
+  return `<span class="tag" style="background:${color}22;border:1px solid ${color}44;color:${color}">${text}</span>`;
+}
+
+function getVehicle(id){ return vehicles.find(v=>v.id===id); }
+
+// ═══════════════════════════════════════════════════════
+//  ALERTS
+// ═══════════════════════════════════════════════════════
+function getAllAlerts(){
+  const alerts=[];
+  vehicles.forEach(v=>{
+    v.maintenances.forEach(m=>{
+      if(m.nextDateAlert){
+        const days=getDaysUntil(m.nextDateAlert);
+        if(days!==null && days<=60) alerts.push({vehicle:v,maintenance:m,type:'date',days});
+      }
+      if(m.nextMileageAlert && v.mileage){
+        const kmLeft=parseInt(m.nextMileageAlert)-parseInt(v.mileage);
+        if(kmLeft<=2000) alerts.push({vehicle:v,maintenance:m,type:'km',kmLeft});
+      }
+    });
+  });
+  return alerts.sort((a,b)=>{
+    const da=a.type==='date'?a.days:(a.kmLeft<0?-9999:a.kmLeft/100);
+    const db=b.type==='date'?b.days:(b.kmLeft<0?-9999:b.kmLeft/100);
+    return da-db;
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type='success'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.style.background=type==='error'?'#ef4444':'#22c55e';
+  el.style.color='#fff';
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+function setView(v, extra={}){
+  view=v;
+  if(extra.vehicleId!==undefined) selectedVehicleId=extra.vehicleId;
+  if(extra.tab) currentTab=extra.tab;
+  if(extra.editVehicleId!==undefined) editVehicleId=extra.editVehicleId;
+  if(extra.editMaintId!==undefined) editMaintId=extra.editMaintId;
+  renderAll();
+}
+
+function goBack(){
+  if(view==='addVehicle') setView(editVehicleId?'vehicle':'dashboard');
+  else if(view==='addMaintenance') setView('vehicle');
+  else if(view==='vehicle') setView('dashboard');
+  else setView('dashboard');
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════
+function renderAll(){
+  const allAlerts=getAllAlerts();
+  const urgentCount=allAlerts.filter(a=>a.days<=7||a.kmLeft<=0).length;
+
+  // Header
+  const backBtn=document.getElementById('header-back');
+  const badge=document.getElementById('header-badge');
+  const titleEl=document.getElementById('header-title');
+  const subEl=document.getElementById('header-sub');
+
+  const showBack=['vehicle','addVehicle','addMaintenance'].includes(view);
+  backBtn.style.display=showBack?'block':'none';
+
+  if(urgentCount>0 && view!=='alerts') badge.style.display='block';
+  else badge.style.display='none';
+
+  const titles={
+    dashboard:'🔧 Mon Garage',
+    alerts:'🔔 Alertes',
+    vehicle: selectedVehicleId ? getVehicle(selectedVehicleId)?.name||'Véhicule' : '',
+    addVehicle: editVehicleId ? '✏️ Modifier' : '➕ Nouveau véhicule',
+    addMaintenance: editMaintId ? '✏️ Modifier' : '🔧 Nouvel entretien',
+  };
+  titleEl.textContent=titles[view]||'Mon Garage';
+
+  const subs={
+    dashboard:`${vehicles.length}/20 véhicules`,
+    alerts:`${allAlerts.length} rappel${allAlerts.length>1?'s':''}`,
+    vehicle:`${getVehicle(selectedVehicleId)?.brand||''} ${getVehicle(selectedVehicleId)?.model||''}`.trim()||'Détails',
+    addVehicle:'',addMaintenance:'',
+  };
+  subEl.textContent=subs[view]||'';
+
+  // Nav
+  document.getElementById('nav').style.display=['dashboard','alerts'].includes(view)?'flex':'none';
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(view==='dashboard') document.getElementById('nav-garage').classList.add('active');
+  if(view==='alerts') document.getElementById('nav-alerts').classList.add('active');
+
+  // Content
+  const content=document.getElementById('content');
+  if(view==='dashboard') content.innerHTML=renderDashboard(allAlerts,urgentCount);
+  else if(view==='alerts') content.innerHTML=renderAlerts(allAlerts);
+  else if(view==='vehicle') content.innerHTML=renderVehicle();
+  else if(view==='addVehicle') content.innerHTML=renderAddVehicle();
+  else if(view==='addMaintenance') content.innerHTML=renderAddMaintenance();
+}
+
+// ═══════════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════════
+function renderDashboard(allAlerts,urgentCount){
+  let html=`
+  <div class="stat-grid">
+    <div class="stat-box" style="border:1px solid #f9731633">
+      <div class="stat-num" style="color:#f97316">${vehicles.length}</div>
+      <div class="stat-lbl">Véhicules</div>
+    </div>
+    <div class="stat-box" style="border:1px solid ${allAlerts.length>0?'#eab30833':'#2a2a3e'}">
+      <div class="stat-num" style="color:${allAlerts.length>0?'#eab308':'#4ade80'}">${allAlerts.length}</div>
+      <div class="stat-lbl">Alertes</div>
+    </div>
+    <div class="stat-box" style="border:1px solid ${urgentCount>0?'#ef444433':'#2a2a3e'}">
+      <div class="stat-num" style="color:#ef4444">${urgentCount}</div>
+      <div class="stat-lbl">Urgentes</div>
+    </div>
+  </div>
+  <div class="row-between">
+    <span class="section-label">Mes véhicules</span>
+    ${vehicles.length<20?`<button class="btn btn-sm" onclick="openAddVehicle()">+ Ajouter</button>`:''}
+  </div>`;
+
+  if(vehicles.length===0){
+    html+=`<div class="empty"><div class="empty-icon">🚗</div><div class="empty-title">Aucun véhicule</div><div class="empty-sub">Ajoutez votre premier véhicule</div></div>`;
+  } else {
+    vehicles.forEach(v=>{
+      const vAlerts=allAlerts.filter(a=>a.vehicle.id===v.id);
+      const urgent=vAlerts.filter(a=>a.days<=7||a.kmLeft<=0).length;
+      const borderColor=urgent>0?'#ef444433':'#2a2a3e';
+      html+=`
+      <div class="card" style="border-color:${borderColor}" onclick="openVehicle('${v.id}')">
+        <div class="row">
+          <div class="vehicle-icon-wrap" style="background:${v.color}22;border:2px solid ${v.color}44">${v.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:17px;font-weight:700;letter-spacing:1px;color:#f1f1f5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.name)}</div>
+            <div style="font-size:12px;color:#6b7280;margin-top:2px">${esc(v.brand)} ${esc(v.model)}${v.year?` • ${v.year}`:''}</div>
+            <div style="font-size:12px;color:#9ca3af;margin-top:3px">
+              ${v.mileage?parseInt(v.mileage).toLocaleString('fr-FR')+' km':'—'}
+              ${v.plate?`<span class="plate" style="margin-left:10px">${esc(v.plate)}</span>`:''}
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+            ${urgent>0?tagHtml('#ef4444',`⚠ ${urgent}`):''}
+            ${vAlerts.length>0&&urgent===0?tagHtml('#eab308',`🔔 ${vAlerts.length}`):''}
+            <span style="font-size:11px;color:#4b5563">${v.maintenances.length} entretien${v.maintenances.length>1?'s':''}</span>
+          </div>
+        </div>
+      </div>`;
+    });
+  }
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════
+//  ALERTS
+// ═══════════════════════════════════════════════════════
+function renderAlerts(allAlerts){
+  if(allAlerts.length===0){
+    return `<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Aucune alerte</div><div class="empty-sub">Tout est à jour !</div></div>`;
+  }
+  let html='<div class="section-label">Rappels & alertes</div>';
+  allAlerts.forEach(alert=>{
+    const color=alert.type==='date'
+      ?urgencyColor(alert.days,false)
+      :urgencyColor(null,alert.kmLeft<=0);
+    const badge=alert.type==='date'
+      ?(alert.days<=0?'DÉPASSÉ':`J-${alert.days}`)
+      :(alert.kmLeft<=0?`+${Math.abs(alert.kmLeft).toLocaleString()} km`:`${alert.kmLeft.toLocaleString()} km`);
+    const sub=alert.type==='date'
+      ?formatDate(alert.maintenance.nextDateAlert)
+      :`Prévu à ${parseInt(alert.maintenance.nextMileageAlert).toLocaleString()} km`;
+    html+=`
+    <div class="alert-item" style="border:1px solid ${color}44" onclick="openVehicle('${alert.vehicle.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#f1f1f5">${esc(alert.maintenance.type)}</div>
+          <div style="font-size:12px;color:#6b7280;margin-top:3px">${alert.vehicle.icon} ${esc(alert.vehicle.name)}</div>
+        </div>
+        <div style="text-align:right">
+          ${tagHtml(color,badge)}
+          <div style="font-size:11px;color:#4b5563;margin-top:4px">${sub}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════
+//  VEHICLE DETAIL
+// ═══════════════════════════════════════════════════════
+function renderVehicle(){
+  const v=getVehicle(selectedVehicleId);
+  if(!v) return '';
+
+  // sorted history
+  const sorted=[...v.maintenances].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  // upcoming
+  const upcoming=v.maintenances
+    .filter(m=>m.nextDateAlert||m.nextMileageAlert)
+    .sort((a,b)=>{
+      const da=a.nextDateAlert?getDaysUntil(a.nextDateAlert):9999;
+      const db=b.nextDateAlert?getDaysUntil(b.nextDateAlert):9999;
+      return da-db;
+    });
+
+  let html=`
+  <div class="vehicle-header">
+    <div class="row" style="margin-bottom:14px">
+      <div class="vehicle-icon-wrap" style="background:${v.color}22;border:2px solid ${v.color}55">${v.icon}</div>
+      <div style="flex:1">
+        <div class="vehicle-name" style="color:${v.color}">${esc(v.name)}</div>
+        <div class="vehicle-sub">${esc(v.brand)} ${esc(v.model)}${v.year?` • ${v.year}`:''}</div>
+        ${v.plate?`<span class="plate">${esc(v.plate)}</span>`:''}
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-outline btn-sm" onclick="openEditVehicle('${v.id}')">✏️</button>
+        <button class="btn-outline btn-sm btn-danger" onclick="confirmDeleteVehicle('${v.id}')">🗑</button>
+      </div>
+    </div>
+    <div>
+      <label class="label">Kilométrage actuel</label>
+      <div style="display:flex;gap:8px">
+        <input id="km-input" type="number" class="input" style="flex:1" placeholder="Ex: 85000" value="${v.mileage||''}" />
+        <button class="btn btn-sm" style="background:linear-gradient(135deg,${v.color},${v.color}cc)" onclick="updateMileage('${v.id}')">Maj</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn ${currentTab==='history'?'active':''}" onclick="switchTab('history')">Historique</button>
+    <button class="tab-btn ${currentTab==='upcoming'?'active':''}" onclick="switchTab('upcoming')">Échéances</button>
+  </div>`;
+
+  if(currentTab==='history'){
+    html+=`<div class="row-between">
+      <span style="font-size:12px;color:#4b5563">${sorted.length} entretien${sorted.length>1?'s':''} enregistré${sorted.length>1?'s':''}</span>
+      <button class="btn btn-sm" onclick="openAddMaintenance()">+ Ajouter</button>
+    </div>`;
+    if(sorted.length===0){
+      html+=`<div class="empty"><div class="empty-icon">🔧</div><div class="empty-title">Aucun entretien</div></div>`;
+    } else {
+      sorted.forEach(m=>{
+        const urgDate=m.nextDateAlert?getDaysUntil(m.nextDateAlert):null;
+        const urgKm=m.nextMileageAlert&&v.mileage?parseInt(m.nextMileageAlert)-parseInt(v.mileage):null;
+        const col=urgencyColor(urgDate,urgKm!==null&&urgKm<=0);
+        const showUrgency=(urgDate!==null&&urgDate<=30)||(urgKm!==null&&urgKm<=1000);
+        html+=`
+        <div class="maint-item" style="border-color:${showUrgency?col+'44':'#2a2a3e'}">
+          <div class="maint-header">
+            <div style="flex:1">
+              <div class="maint-title">${esc(m.type)}</div>
+              <div class="maint-meta">
+                📅 ${formatDate(m.date)}
+                ${m.mileageAtService?` &nbsp;🛣 ${parseInt(m.mileageAtService).toLocaleString()} km`:''}
+                ${m.cost?` &nbsp;💶 ${m.cost}€`:''}
+              </div>
+              ${m.notes?`<div class="maint-notes">${esc(m.notes)}</div>`:''}
+              ${(m.nextDateAlert||m.nextMileageAlert)?`
+              <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">
+                ${m.nextDateAlert?tagHtml(col,`Prochain: ${formatDate(m.nextDateAlert)}${urgDate!==null?' (J'+(urgDate<=0?urgDate:'-'+urgDate)+')':''}`): ''}
+                ${m.nextMileageAlert?tagHtml(urgKm!==null?urgencyColor(null,urgKm<=0):'#4ade80',`À ${parseInt(m.nextMileageAlert).toLocaleString()} km${urgKm!==null?' ('+( urgKm>0?'+':'')+urgKm.toLocaleString()+' km)':''}`):''}
+              </div>`:''}
+            </div>
+            <div class="maint-actions">
+              <button class="maint-act-btn" onclick="openEditMaintenance('${m.id}')">✏️</button>
+              <button class="maint-act-btn" style="color:#ef4444;border-color:#ef444433" onclick="confirmDeleteMaintenance('${m.id}')">🗑</button>
+            </div>
+          </div>
+        </div>`;
+      });
+    }
+  } else {
+    if(upcoming.length===0){
+      html+=`<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">Aucune échéance</div><div class="empty-sub">Ajoutez une date ou un kilométrage de prochain entretien</div></div>`;
+    } else {
+      upcoming.forEach(m=>{
+        const days=m.nextDateAlert?getDaysUntil(m.nextDateAlert):null;
+        const kmLeft=m.nextMileageAlert&&v.mileage?parseInt(m.nextMileageAlert)-parseInt(v.mileage):null;
+        const col=urgencyColor(days,kmLeft!==null&&kmLeft<=0);
+        html+=`
+        <div style="background:#13131f;border:1px solid ${col}44;border-radius:13px;padding:14px;margin-bottom:10px">
+          <div style="font-size:15px;font-weight:700;color:#f1f1f5;margin-bottom:10px">${esc(m.type)}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${m.nextDateAlert?`
+            <div style="background:${col}11;border:1px solid ${col}33;border-radius:10px;padding:8px 12px;flex:1">
+              <div style="font-size:10px;color:#6b7280;letter-spacing:1px;text-transform:uppercase">Date prévue</div>
+              <div style="font-size:15px;font-weight:700;color:${col};margin-top:3px">${days<=0?'DÉPASSÉ':'J-'+days}</div>
+              <div style="font-size:11px;color:#9ca3af">${formatDate(m.nextDateAlert)}</div>
+            </div>`:''}
+            ${m.nextMileageAlert?`
+            <div style="background:${kmLeft!==null?urgencyColor(null,kmLeft<=0):'#4ade80'}11;border:1px solid ${kmLeft!==null?urgencyColor(null,kmLeft<=0):'#4ade80'}33;border-radius:10px;padding:8px 12px;flex:1">
+              <div style="font-size:10px;color:#6b7280;letter-spacing:1px;text-transform:uppercase">Kilométrage prévu</div>
+              <div style="font-size:15px;font-weight:700;color:${kmLeft!==null?urgencyColor(null,kmLeft<=0):'#4ade80'};margin-top:3px">
+                ${kmLeft!==null?(kmLeft<=0?'+'+Math.abs(kmLeft).toLocaleString()+' km':kmLeft.toLocaleString()+' km'):'—'}
+              </div>
+              <div style="font-size:11px;color:#9ca3af">Prévu à ${parseInt(m.nextMileageAlert).toLocaleString()} km</div>
+            </div>`:''}
+          </div>
+        </div>`;
+      });
+    }
+  }
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADD / EDIT VEHICLE
+// ═══════════════════════════════════════════════════════
+let vForm={name:'',brand:'',model:'',year:'',plate:'',mileage:'',icon:'🚗',color:'#f97316'};
+
+function renderAddVehicle(){
+  const v=editVehicleId?{...getVehicle(editVehicleId)}:{...vForm};
+  let html=`
+  <div style="font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#f97316;margin-bottom:20px">
+    ${editVehicleId?'Modifier le véhicule':'Nouveau véhicule'}
+  </div>
+
+  <div class="form-group">
+    <label class="label">Icône</label>
+    <div class="icon-picker" id="icon-picker">
+      ${CAR_ICONS.map(ic=>`<button class="icon-btn ${ic===v.icon?'active':''}" onclick="selectIcon('${ic}')" id="icon-${ic}">${ic}</button>`).join('')}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="label">Couleur</label>
+    <div class="color-picker">
+      ${COLORS.map(c=>`<button class="color-btn ${c===v.color?'active':''}" style="background:${c}" onclick="selectColor('${c}')" id="col-${c.replace('#','')}"></button>`).join('')}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="label">Nom du véhicule *</label>
+    <input type="text" class="input" id="vf-name" placeholder="Ex: Ma Clio, Voiture pro…" value="${esc(v.name)}"/>
+  </div>
+  <div class="form-row">
+    <div><label class="label">Marque</label><input type="text" class="input" id="vf-brand" placeholder="Renault…" value="${esc(v.brand)}"/></div>
+    <div><label class="label">Modèle</label><input type="text" class="input" id="vf-model" placeholder="Clio…" value="${esc(v.model)}"/></div>
+  </div>
+  <div class="form-row">
+    <div><label class="label">Année</label><input type="number" class="input" id="vf-year" placeholder="2019" value="${esc(v.year)}"/></div>
+    <div><label class="label">Immatriculation</label><input type="text" class="input" id="vf-plate" placeholder="AB-123-CD" value="${esc(v.plate)}"/></div>
+  </div>
+  <div class="form-group">
+    <label class="label">Kilométrage actuel</label>
+    <input type="number" class="input" id="vf-mileage" placeholder="85000" value="${esc(v.mileage)}"/>
+  </div>
+
+  <div class="form-footer">
+    <button class="btn-outline btn-full" onclick="goBack()">Annuler</button>
+    <button class="btn btn-full" onclick="saveVehicle()" style="flex:2">
+      ${editVehicleId?'Modifier':'Ajouter le véhicule'}
+    </button>
+  </div>`;
+
+  // Store current icon/color in hidden fields via globals
+  window._selIcon=v.icon;
+  window._selColor=v.color;
+  return html;
+}
+
+function selectIcon(ic){
+  window._selIcon=ic;
+  document.querySelectorAll('.icon-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('icon-'+ic)?.classList.add('active');
+}
+function selectColor(c){
+  window._selColor=c;
+  document.querySelectorAll('.color-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('col-'+c.replace('#',''))?.classList.add('active');
+}
+
+function saveVehicle(){
+  const name=(document.getElementById('vf-name')?.value||'').trim();
+  if(!name) return showToast('Nom requis','error');
+  if(vehicles.length>=20&&!editVehicleId) return showToast('Maximum 20 véhicules','error');
+  const entry={
+    id:editVehicleId||uid(),
+    name,
+    brand:document.getElementById('vf-brand')?.value||'',
+    model:document.getElementById('vf-model')?.value||'',
+    year:document.getElementById('vf-year')?.value||'',
+    plate:document.getElementById('vf-plate')?.value||'',
+    mileage:document.getElementById('vf-mileage')?.value||'',
+    icon:window._selIcon||'🚗',
+    color:window._selColor||'#f97316',
+    maintenances:editVehicleId?(getVehicle(editVehicleId)?.maintenances||[]):[],
+  };
+  if(editVehicleId) vehicles=vehicles.map(v=>v.id===editVehicleId?entry:v);
+  else vehicles.push(entry);
+  saveData();
+  selectedVehicleId=entry.id;
+  setView(editVehicleId?'vehicle':'dashboard',{editVehicleId:null});
+  showToast(editVehicleId?'Véhicule modifié ✓':'Véhicule ajouté ✓');
+}
+
+function openAddVehicle(){ editVehicleId=null; setView('addVehicle'); }
+function openEditVehicle(id){ editVehicleId=id; setView('addVehicle'); }
+
+function confirmDeleteVehicle(id){
+  if(confirm('Supprimer ce véhicule et tous ses entretiens ?')){
+    vehicles=vehicles.filter(v=>v.id!==id);
+    saveData();
+    setView('dashboard');
+    showToast('Véhicule supprimé');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADD / EDIT MAINTENANCE
+// ═══════════════════════════════════════════════════════
+let mForm={type:'',customType:'',date:'',mileageAtService:'',nextDateAlert:'',nextMileageAlert:'',notes:'',cost:''};
+
+function renderAddMaintenance(){
+  const v=getVehicle(selectedVehicleId);
+  const m=editMaintId?v?.maintenances.find(x=>x.id===editMaintId):null;
+  const f=m?{...m,type:MAINTENANCE_TYPES.includes(m.type)?m.type:'Autre',customType:MAINTENANCE_TYPES.includes(m.type)?'':m.type}:{...mForm};
+
+  const today=new Date().toISOString().split('T')[0];
+
+  return `
+  <div style="font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#f97316;margin-bottom:20px">
+    ${editMaintId?'Modifier l\'entretien':'Nouvel entretien'}
+  </div>
+
+  <div class="form-group">
+    <label class="label">Type d'entretien *</label>
+    <select class="select" id="mf-type" onchange="toggleCustomType()">
+      <option value="">— Sélectionner —</option>
+      ${MAINTENANCE_TYPES.map(t=>`<option value="${t}" ${f.type===t?'selected':''}>${t}</option>`).join('')}
+    </select>
+  </div>
+
+  <div class="form-group" id="custom-type-group" style="display:${f.type==='Autre'?'block':'none'}">
+    <label class="label">Préciser *</label>
+    <input type="text" class="input" id="mf-customType" placeholder="Ex: Remplacement silentblocs…" value="${esc(f.customType)}"/>
+  </div>
+
+  <div class="form-row">
+    <div><label class="label">Date d'entretien *</label><input type="date" class="input" id="mf-date" value="${f.date||today}"/></div>
+    <div><label class="label">Kilométrage</label><input type="number" class="input" id="mf-mileageAtService" placeholder="km" value="${esc(f.mileageAtService)}"/></div>
+  </div>
+
+  <div class="form-group">
+    <label class="label">Coût (€)</label>
+    <input type="number" class="input" id="mf-cost" placeholder="Ex: 120" value="${esc(f.cost)}"/>
+  </div>
+
+  <div class="divider">
+    <div style="font-size:12px;color:#f97316;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;border-left:3px solid #f97316;padding-left:8px">🔔 Rappels prochain entretien</div>
+    <div class="form-row">
+      <div><label class="label">Date d'alerte</label><input type="date" class="input" id="mf-nextDateAlert" value="${f.nextDateAlert||''}"/></div>
+      <div><label class="label">Alerte km</label><input type="number" class="input" id="mf-nextMileageAlert" placeholder="km prévu" value="${esc(f.nextMileageAlert)}"/></div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="label">Notes</label>
+    <textarea class="textarea" id="mf-notes" placeholder="Observations, atelier, pièces…">${esc(f.notes)}</textarea>
+
+  </div>
+
+  <div class="form-footer">
+    <button class="btn-outline btn-full" onclick="goBack()">Annuler</button>
+    <button class="btn btn-full" onclick="saveMaintenance()" style="flex:2">
+      ${editMaintId?'Modifier':'Enregistrer'}
+    </button>
+  </div>`;
+}
+
+function toggleCustomType(){
+const sel=document.getElementById(‘mf-type’)?.value;
+const grp=document.getElementById(‘custom-type-group’);
+if(grp) grp.style.display=sel===‘Autre’?‘block’:‘none’;
+}
+
+function saveMaintenance(){
+const typeRaw=document.getElementById(‘mf-type’)?.value||’’;
+const custom=(document.getElementById(‘mf-customType’)?.value||’’).trim();
+const type=typeRaw===‘Autre’?custom:typeRaw;
+const date=document.getElementById(‘mf-date’)?.value||’’;
+if(!type) return showToast(‘Type requis’,‘error’);
+if(!date) return showToast(‘Date requise’,‘error’);
+
+const entry={
+id:editMaintId||uid(),
+type,
+date,
+mileageAtService:document.getElementById(‘mf-mileageAtService’)?.value||’’,
+nextDateAlert:document.getElementById(‘mf-nextDateAlert’)?.value||’’,
+nextMileageAlert:document.getElementById(‘mf-nextMileageAlert’)?.value||’’,
+cost:document.getElementById(‘mf-cost’)?.value||’’,
+notes:document.getElementById(‘mf-notes’)?.value||’’,
+};
+
+vehicles=vehicles.map(v=>{
+if(v.id!==selectedVehicleId) return v;
+const maints=editMaintId
+?v.maintenances.map(m=>m.id===editMaintId?entry:m)
+:[…v.maintenances,entry];
+return {…v,maintenances:maints};
+});
+saveData();
+setView(‘vehicle’,{editMaintId:null});
+showToast(editMaintId?‘Entretien modifié ✓’:‘Entretien enregistré ✓’);
+}
+
+function openAddMaintenance(){ editMaintId=null; setView(‘addMaintenance’); }
+function openEditMaintenance(id){ editMaintId=id; setView(‘addMaintenance’); }
+
+function confirmDeleteMaintenance(id){
+if(confirm(‘Supprimer cet entretien ?’)){
+vehicles=vehicles.map(v=>v.id!==selectedVehicleId?v:{…v,maintenances:v.maintenances.filter(m=>m.id!==id)});
+saveData();
+setView(‘vehicle’);
+showToast(‘Entretien supprimé’);
+}
+}
+
+// ═══════════════════════════════════════════════════════
+//  VEHICLE ACTIONS
+// ═══════════════════════════════════════════════════════
+function openVehicle(id){ selectedVehicleId=id; currentTab=‘history’; setView(‘vehicle’); }
+
+function updateMileage(id){
+const val=document.getElementById(‘km-input’)?.value||’’;
+vehicles=vehicles.map(v=>v.id===id?{…v,mileage:val}:v);
+saveData();
+showToast(‘Kilométrage mis à jour ✓’);
+renderAll();
+}
+
+function switchTab(t){ currentTab=t; renderAll(); }
+
+// ═══════════════════════════════════════════════════════
+//  ESCAPE
+// ═══════════════════════════════════════════════════════
+function esc(s){
+if(!s) return ‘’;
+return String(s).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+loadData();
+renderAll();
+</script>
+
+</body>
+</html>
